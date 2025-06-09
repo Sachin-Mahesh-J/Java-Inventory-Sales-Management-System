@@ -40,7 +40,6 @@ public class LoginView extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(640, 440));
         setResizable(false);
         setSize(new java.awt.Dimension(640, 440));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -142,28 +141,20 @@ public class LoginView extends javax.swing.JFrame {
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 640, 440));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         String username = userText.getText();
         String password = new String(passText.getPassword());
-        
+
         Dbconnect db = new Dbconnect();
         String usertype = db.logincheck(username, password);
         if (usertype != null) {
-            switch (usertype.toUpperCase()) {
-                case "ADMINISTRATOR":
-                    JOptionPane.showMessageDialog(rootPane, "Hello and Wellcome " + usertype + " " + username, "Wellcome", HEIGHT);
-                    Dashboardview dashboardview = new Dashboardview();
-                    dashboardview.setVisible(true);
-                    break;
-                
-                case "EMPLOYEE":
-                    JOptionPane.showMessageDialog(rootPane, "Hello and Wellcome " + usertype + " " + username, "Wellcome", HEIGHT);
-                    break;
-                default:
-                    throw new AssertionError();
-            }
+
+            Dashboardview dashboardview = new Dashboardview();
+            dashboardview.setVisible(true);
+
         } else {
             JOptionPane.showMessageDialog(rootPane, "Invalid Username and Password", "Error", HEIGHT);
         }

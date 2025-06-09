@@ -8,7 +8,7 @@ package ISMS.models;
  *
  * @author sachi
  */
-public class Users {
+public class User {
     private int ID;
     
     private String fullName, location, phone, username, password, userType;
