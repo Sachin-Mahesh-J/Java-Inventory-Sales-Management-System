@@ -8,7 +8,6 @@ package ISMS.models;
  *
  * @author sachi
  */
-
 import java.sql.*;
 import java.util.logging.*;
 
@@ -18,10 +17,10 @@ public class Dbconnect {
     private static final String URL = "jdbc:mysql://localhost:3306/inventory";
     private static final String USER = "root";
     private static final String PASSWORD = "";
-    
+
     private static final Logger logger = Logger.getLogger(Dbconnect.class.getName());
 
-    private Connection conn = null;
+    private static Connection conn = null;
 
     public Dbconnect() {
         try {
@@ -32,7 +31,7 @@ public class Dbconnect {
         }
     }
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         try {
             if (conn == null || conn.isClosed()) {
                 Class.forName(DRIVER);
@@ -45,7 +44,7 @@ public class Dbconnect {
     }
 
     //login check
-    public String logincheck(String username, String password) {
+    public User loginUser(String username, String password) {
         String query = "SELECT * FROM users WHERE username=? AND password=?";
         try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(query)) {
 
@@ -53,9 +52,12 @@ public class Dbconnect {
             ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getString("usertype");
+                    User user = new User();
+                    user.setUsername(rs.getString("username"));
+                    //user.setPassword(rs.getString("password"));
+                    user.setUserType(rs.getString("usertype"));
+                    return user;
                 }
-
             }
 
         } catch (SQLException e) {
@@ -63,4 +65,5 @@ public class Dbconnect {
         }
         return null;
     }
+
 }

@@ -11,10 +11,19 @@ package ISMS.models;
 public class User {
     private int ID;
     
-    private String fullName, location, phone, username, password, userType;
+    private String Name, phone, username, password, userType, createdat;
+
+    public String getCreatedat() {
+        return createdat;
+    }
+
+    public void setCreatedat(String createdat) {
+        this.createdat = createdat;
+    }
     
     private String inTime, outTime;
     
+
     public int getID() {
         return ID;
     }
@@ -23,20 +32,12 @@ public class User {
         this.ID = ID;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return Name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+    public void setName(String Name) {
+        this.Name = Name;
     }
 
     public String getPhone() {
@@ -86,6 +87,7 @@ public class User {
     public void setOutTime(String outTime) {
         this.outTime = outTime;
     }
+    
     
     
 }

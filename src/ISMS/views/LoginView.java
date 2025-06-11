@@ -4,7 +4,8 @@
  */
 package ISMS.views;
 
-import ISMS.models.Dbconnect;
+import ISMS.models.*;
+import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
 
 /**
@@ -16,6 +17,9 @@ public class LoginView extends javax.swing.JFrame {
     /**
      * Creates new form LoginView
      */
+    LocalDateTime inTime;
+    User user;
+
     public LoginView() {
         initComponents();
     }
@@ -148,13 +152,13 @@ public class LoginView extends javax.swing.JFrame {
         String username = userText.getText();
         String password = new String(passText.getPassword());
 
-        Dbconnect db = new Dbconnect();
-        String usertype = db.logincheck(username, password);
-        if (usertype != null) {
+        user = new Dbconnect().loginUser(username, password); // now user is initialized
 
-            Dashboardview dashboardview = new Dashboardview();
-            dashboardview.setVisible(true);
-
+        if (user != null) {
+            inTime = LocalDateTime.now();
+            user.setInTime(String.valueOf(inTime));
+            this.dispose();
+            new Dashboardview(username, user.getUserType(), user).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(rootPane, "Invalid Username and Password", "Error", HEIGHT);
         }
