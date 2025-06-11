@@ -39,6 +39,7 @@ public class InventoryView extends javax.swing.JPanel {
         setBorder(new javax.swing.border.MatteBorder(null));
         setMaximumSize(new java.awt.Dimension(1050, 521));
         setMinimumSize(new java.awt.Dimension(1050, 521));
+        setPreferredSize(new java.awt.Dimension(1050, 521));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
