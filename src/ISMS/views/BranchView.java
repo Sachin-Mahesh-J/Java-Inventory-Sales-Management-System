@@ -8,6 +8,11 @@ package ISMS.views;
  *
  * @author sachi
  */
+import ISMS.DAO.Dbconnect;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 public class BranchView extends javax.swing.JPanel {
 
     /**
@@ -15,6 +20,85 @@ public class BranchView extends javax.swing.JPanel {
      */
     public BranchView() {
         initComponents();
+        loadBranches("");
+        tblBranches.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = tblBranches.getSelectedRow();
+                if (row >= 0) {
+                    BranchNametxt.setText(tblBranches.getValueAt(row, 1).toString());
+                    BranchLocationtxt.setText(tblBranches.getValueAt(row, 2).toString());
+                }
+            }
+        });
+
+    }
+
+    public void addBranch(String name, String location) {
+        String query = "INSERT INTO Branch (name, location) VALUES (?, ?)";
+        try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setString(1, name);
+            pst.setString(2, location);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Branch added successfully!");
+            loadBranches("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error adding branch: " + e.getMessage());
+        }
+
+    }
+
+    public void loadBranches(String keyword) {
+        Connection conn = Dbconnect.getConnection();
+        DefaultTableModel model = (DefaultTableModel) tblBranches.getModel();
+        model.setRowCount(0); // Clear table
+
+        String query = "SELECT * FROM Branch WHERE name LIKE ? OR location LIKE ?";
+        try (PreparedStatement pst = conn.prepareStatement(query)) {
+            String searchPattern = "%" + keyword + "%";
+            pst.setString(1, searchPattern);
+            pst.setString(2, searchPattern);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("branch_id"),
+                    rs.getString("name"),
+                    rs.getString("location")
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error searching branches: " + e.getMessage());
+        }
+    }
+
+    public void updateBranch(int id, String name, String location) {
+        String query = "UPDATE Branch SET name = ?, location = ? WHERE branch_id = ?";
+        try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setString(1, name);
+            pst.setString(2, location);
+            pst.setInt(3, id);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Branch updated successfully!");
+            loadBranches("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error updating branch: " + e.getMessage());
+        }
+    }
+
+    public void deleteBranch(int id) {
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure?", "Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String query = "DELETE FROM Branch WHERE branch_id = ?";
+            try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+                pst.setInt(1, id);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Branch deleted.");
+                loadBranches("");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error deleting branch: " + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -29,21 +113,23 @@ public class BranchView extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        BranchNametxt = new javax.swing.JTextField();
+        BranchLocationtxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        AddBranchbtn = new javax.swing.JButton();
+        UpdateBranchbtn = new javax.swing.JButton();
+        Clearbtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblBranches = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        Searchtxt = new javax.swing.JTextField();
+        Refreshbtn = new javax.swing.JButton();
+        Deletebtn = new javax.swing.JButton();
 
         setBorder(new javax.swing.border.MatteBorder(null));
+        setMaximumSize(new java.awt.Dimension(1050, 521));
+        setMinimumSize(new java.awt.Dimension(1050, 521));
+        setPreferredSize(new java.awt.Dimension(1050, 521));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
@@ -63,17 +149,17 @@ public class BranchView extends javax.swing.JPanel {
         jLabel2.setPreferredSize(new java.awt.Dimension(80, 30));
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 35, -1, -1));
 
-        jTextField1.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField1.setMaximumSize(new java.awt.Dimension(180, 30));
-        jTextField1.setMinimumSize(new java.awt.Dimension(180, 30));
-        jTextField1.setPreferredSize(new java.awt.Dimension(180, 30));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 35, -1, -1));
+        BranchNametxt.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        BranchNametxt.setMaximumSize(new java.awt.Dimension(180, 30));
+        BranchNametxt.setMinimumSize(new java.awt.Dimension(180, 30));
+        BranchNametxt.setPreferredSize(new java.awt.Dimension(180, 30));
+        jPanel1.add(BranchNametxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 35, -1, -1));
 
-        jTextField2.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField2.setMaximumSize(new java.awt.Dimension(180, 30));
-        jTextField2.setMinimumSize(new java.awt.Dimension(180, 30));
-        jTextField2.setPreferredSize(new java.awt.Dimension(180, 30));
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 75, -1, -1));
+        BranchLocationtxt.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        BranchLocationtxt.setMaximumSize(new java.awt.Dimension(180, 30));
+        BranchLocationtxt.setMinimumSize(new java.awt.Dimension(180, 30));
+        BranchLocationtxt.setPreferredSize(new java.awt.Dimension(180, 30));
+        jPanel1.add(BranchLocationtxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 75, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
         jLabel3.setText("Location:");
@@ -82,29 +168,44 @@ public class BranchView extends javax.swing.JPanel {
         jLabel3.setPreferredSize(new java.awt.Dimension(80, 30));
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 75, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(0, 204, 204));
-        jButton1.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton1.setText("Add");
-        jButton1.setMaximumSize(new java.awt.Dimension(70, 30));
-        jButton1.setMinimumSize(new java.awt.Dimension(70, 30));
-        jButton1.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
+        AddBranchbtn.setBackground(new java.awt.Color(0, 204, 204));
+        AddBranchbtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        AddBranchbtn.setText("Add");
+        AddBranchbtn.setMaximumSize(new java.awt.Dimension(70, 30));
+        AddBranchbtn.setMinimumSize(new java.awt.Dimension(70, 30));
+        AddBranchbtn.setPreferredSize(new java.awt.Dimension(70, 30));
+        AddBranchbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddBranchbtnActionPerformed(evt);
+            }
+        });
+        jPanel1.add(AddBranchbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
 
-        jButton2.setBackground(new java.awt.Color(0, 153, 51));
-        jButton2.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton2.setText("Save");
-        jButton2.setMaximumSize(new java.awt.Dimension(70, 30));
-        jButton2.setMinimumSize(new java.awt.Dimension(70, 30));
-        jButton2.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, -1, -1));
+        UpdateBranchbtn.setBackground(new java.awt.Color(0, 153, 51));
+        UpdateBranchbtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        UpdateBranchbtn.setText("Update");
+        UpdateBranchbtn.setMaximumSize(new java.awt.Dimension(70, 30));
+        UpdateBranchbtn.setMinimumSize(new java.awt.Dimension(70, 30));
+        UpdateBranchbtn.setPreferredSize(new java.awt.Dimension(70, 30));
+        UpdateBranchbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateBranchbtnActionPerformed(evt);
+            }
+        });
+        jPanel1.add(UpdateBranchbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 80, -1));
 
-        jButton3.setBackground(new java.awt.Color(255, 255, 204));
-        jButton3.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton3.setText("Clear");
-        jButton3.setMaximumSize(new java.awt.Dimension(70, 30));
-        jButton3.setMinimumSize(new java.awt.Dimension(70, 30));
-        jButton3.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 150, -1, -1));
+        Clearbtn.setBackground(new java.awt.Color(255, 255, 204));
+        Clearbtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        Clearbtn.setText("Clear");
+        Clearbtn.setMaximumSize(new java.awt.Dimension(70, 30));
+        Clearbtn.setMinimumSize(new java.awt.Dimension(70, 30));
+        Clearbtn.setPreferredSize(new java.awt.Dimension(70, 30));
+        Clearbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ClearbtnActionPerformed(evt);
+            }
+        });
+        jPanel1.add(Clearbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 150, -1, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 45, 320, -1));
 
@@ -113,7 +214,7 @@ public class BranchView extends javax.swing.JPanel {
         jScrollPane1.setMinimumSize(new java.awt.Dimension(701, 392));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(701, 392));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblBranches.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -129,7 +230,7 @@ public class BranchView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblBranches);
 
         add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 45, -1, -1));
 
@@ -139,48 +240,107 @@ public class BranchView extends javax.swing.JPanel {
         jLabel7.setPreferredSize(new java.awt.Dimension(90, 30));
         add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 54, -1));
 
-        jTextField5.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField5.setMinimumSize(new java.awt.Dimension(250, 30));
-        jTextField5.setPreferredSize(new java.awt.Dimension(250, 30));
-        add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, -1, -1));
+        Searchtxt.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        Searchtxt.setMinimumSize(new java.awt.Dimension(250, 30));
+        Searchtxt.setPreferredSize(new java.awt.Dimension(250, 30));
+        Searchtxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                SearchtxtKeyPressed(evt);
+            }
+        });
+        add(Searchtxt, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, -1, -1));
 
-        jButton4.setText("Refresh");
-        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 13, -1, -1));
+        Refreshbtn.setText("Refresh");
+        Refreshbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RefreshbtnActionPerformed(evt);
+            }
+        });
+        add(Refreshbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 13, -1, -1));
 
-        jButton5.setBackground(new java.awt.Color(204, 153, 0));
-        jButton5.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton5.setText("Detete Selected");
-        jButton5.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton5.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton5.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 460, 130, 30));
-
-        jButton6.setBackground(new java.awt.Color(204, 153, 0));
-        jButton6.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton6.setText("Edit Selected");
-        jButton6.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton6.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton6.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 460, 130, 30));
+        Deletebtn.setBackground(new java.awt.Color(204, 153, 0));
+        Deletebtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        Deletebtn.setText("Detete Selected");
+        Deletebtn.setMaximumSize(new java.awt.Dimension(88, 30));
+        Deletebtn.setMinimumSize(new java.awt.Dimension(88, 30));
+        Deletebtn.setPreferredSize(new java.awt.Dimension(88, 30));
+        Deletebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeletebtnActionPerformed(evt);
+            }
+        });
+        add(Deletebtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 460, 130, 30));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void AddBranchbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddBranchbtnActionPerformed
+        String name = BranchNametxt.getText();
+        String location = BranchLocationtxt.getText();
+        if (name.isEmpty() || location.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in both name and location.");
+            return;
+        }
+        addBranch(name, location);
+    }//GEN-LAST:event_AddBranchbtnActionPerformed
+
+    private void UpdateBranchbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateBranchbtnActionPerformed
+        int selectedRow = tblBranches.getSelectedRow();
+        if (selectedRow >= 0) {
+            int id = (int) tblBranches.getValueAt(selectedRow, 0);
+            String name = BranchNametxt.getText();
+            String location = BranchLocationtxt.getText();
+
+            if (name.isEmpty() || location.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in both name and location.");
+                return;
+            }
+
+            updateBranch(id, name, location);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a branch to update.");
+        }
+    }//GEN-LAST:event_UpdateBranchbtnActionPerformed
+
+    private void ClearbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearbtnActionPerformed
+        BranchNametxt.setText("");
+        BranchLocationtxt.setText("");
+    }//GEN-LAST:event_ClearbtnActionPerformed
+
+    private void DeletebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeletebtnActionPerformed
+        int selectedRow = tblBranches.getSelectedRow();
+        if (selectedRow >= 0) {
+            int id = (int) tblBranches.getValueAt(selectedRow, 0);
+            deleteBranch(id);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a branch to update.");
+        }
+    }//GEN-LAST:event_DeletebtnActionPerformed
+
+    private void RefreshbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefreshbtnActionPerformed
+        Searchtxt.setText("");
+        loadBranches("");
+    }//GEN-LAST:event_RefreshbtnActionPerformed
+
+    private void SearchtxtKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchtxtKeyPressed
+        String keyword = Searchtxt.getText();
+        loadBranches(keyword);
+    }//GEN-LAST:event_SearchtxtKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JButton AddBranchbtn;
+    private javax.swing.JTextField BranchLocationtxt;
+    private javax.swing.JTextField BranchNametxt;
+    private javax.swing.JButton Clearbtn;
+    private javax.swing.JButton Deletebtn;
+    private javax.swing.JButton Refreshbtn;
+    private javax.swing.JTextField Searchtxt;
+    private javax.swing.JButton UpdateBranchbtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTable tblBranches;
     // End of variables declaration//GEN-END:variables
 }

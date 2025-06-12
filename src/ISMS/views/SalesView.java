@@ -112,7 +112,7 @@ public class SalesView extends javax.swing.JPanel {
         jButton7.setText("Load Products");
         add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 60, 140, 30));
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add a New Products", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Serif", 1, 18))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add to Cart", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Serif", 1, 18))); // NOI18N
         jPanel2.setMaximumSize(new java.awt.Dimension(320, 463));
         jPanel2.setMinimumSize(new java.awt.Dimension(320, 463));
         jPanel2.setPreferredSize(new java.awt.Dimension(320, 463));
