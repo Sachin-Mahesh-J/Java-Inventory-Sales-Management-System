@@ -37,6 +37,7 @@ public class Dashboardview extends javax.swing.JFrame {
         DisplayPanel.add("Branch",new BranchView());
         DisplayPanel.add("Inventory",new InventoryView());
         DisplayPanel.add("UserLogs",new UserLogsVIew());
+        DisplayPanel.add("Suppliers", new SuppliersView());
         
     }
 
@@ -53,6 +54,7 @@ public class Dashboardview extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         DisplayPanel = new javax.swing.JPanel();
         NavPanel = new javax.swing.JPanel();
         HomeButton = new javax.swing.JButton();
@@ -60,16 +62,15 @@ public class Dashboardview extends javax.swing.JFrame {
         ProductButton = new javax.swing.JButton();
         SaleButton = new javax.swing.JButton();
         InventoryButton = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        SuppliersButton = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         Users = new javax.swing.JButton();
         UserLogs = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
         MenuPanel1 = new javax.swing.JPanel();
         MenuButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setBackground(new java.awt.Color(153, 153, 255));
+        setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(1280, 720));
         setMinimumSize(new java.awt.Dimension(1280, 720));
         setResizable(false);
@@ -77,8 +78,8 @@ public class Dashboardview extends javax.swing.JFrame {
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setMinimumSize(new java.awt.Dimension(1280, 720));
-        jPanel1.setPreferredSize(new java.awt.Dimension(1280, 720));
+        jPanel1.setMinimumSize(new java.awt.Dimension(1280, 780));
+        jPanel1.setPreferredSize(new java.awt.Dimension(1280, 780));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
@@ -95,12 +96,22 @@ public class Dashboardview extends javax.swing.JFrame {
         jButton2.setContentAreaFilled(false);
         jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Store Inventory System");
+        jLabel1.setToolTipText("");
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel1.setPreferredSize(new java.awt.Dimension(1280, 40));
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap(605, Short.MAX_VALUE)
+                .addContainerGap(173, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(132, 132, 132)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -113,18 +124,20 @@ public class Dashboardview extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(216, 97, 1050, 70));
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 10, 1050, 70));
 
         DisplayPanel.setBackground(new java.awt.Color(255, 255, 255));
         DisplayPanel.setBorder(new javax.swing.border.MatteBorder(null));
         DisplayPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        DisplayPanel.setMaximumSize(new java.awt.Dimension(1050, 521));
-        DisplayPanel.setMinimumSize(new java.awt.Dimension(1050, 521));
-        DisplayPanel.setPreferredSize(new java.awt.Dimension(1050, 521));
+        DisplayPanel.setMaximumSize(new java.awt.Dimension(1050, 600));
+        DisplayPanel.setMinimumSize(new java.awt.Dimension(1050, 600));
+        DisplayPanel.setPreferredSize(new java.awt.Dimension(1050, 600));
 
         javax.swing.GroupLayout DisplayPanelLayout = new javax.swing.GroupLayout(DisplayPanel);
         DisplayPanel.setLayout(DisplayPanelLayout);
@@ -134,15 +147,17 @@ public class Dashboardview extends javax.swing.JFrame {
         );
         DisplayPanelLayout.setVerticalGroup(
             DisplayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 519, Short.MAX_VALUE)
+            .addGap(0, 598, Short.MAX_VALUE)
         );
 
-        jPanel1.add(DisplayPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(216, 185, -1, -1));
+        jPanel1.add(DisplayPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 90, -1, -1));
 
         NavPanel.setBackground(new java.awt.Color(255, 255, 255));
         NavPanel.setBorder(new javax.swing.border.MatteBorder(null));
         NavPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        NavPanel.setPreferredSize(new java.awt.Dimension(216, 549));
+        NavPanel.setMaximumSize(new java.awt.Dimension(189, 600));
+        NavPanel.setMinimumSize(new java.awt.Dimension(189, 600));
+        NavPanel.setPreferredSize(new java.awt.Dimension(189, 600));
         NavPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         HomeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/ISMS/Resources/home.gif"))); // NOI18N
@@ -196,10 +211,15 @@ public class Dashboardview extends javax.swing.JFrame {
         });
         NavPanel.add(InventoryButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 222, 162, 37));
 
-        jButton7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton7.setText("jButton2");
-        jButton7.setPreferredSize(new java.awt.Dimension(140, 30));
-        NavPanel.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 274, 162, 37));
+        SuppliersButton.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        SuppliersButton.setText("Suppliers");
+        SuppliersButton.setPreferredSize(new java.awt.Dimension(140, 30));
+        SuppliersButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SuppliersButtonActionPerformed(evt);
+            }
+        });
+        NavPanel.add(SuppliersButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 274, 162, 37));
 
         jButton8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton8.setText("jButton2");
@@ -226,14 +246,7 @@ public class Dashboardview extends javax.swing.JFrame {
         });
         NavPanel.add(UserLogs, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 430, 162, 37));
 
-        jPanel1.add(NavPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(13, 185, 189, 521));
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Inventory Management System");
-        jLabel3.setToolTipText("");
-        jLabel3.setPreferredSize(new java.awt.Dimension(1253, 70));
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(13, 9, -1, -1));
+        jPanel1.add(NavPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 189, 600));
 
         MenuPanel1.setBackground(new java.awt.Color(255, 255, 255));
         MenuPanel1.setBorder(new javax.swing.border.MatteBorder(null));
@@ -263,9 +276,9 @@ public class Dashboardview extends javax.swing.JFrame {
             .addComponent(MenuButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jPanel1.add(MenuPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(13, 97, 189, 70));
+        jPanel1.add(MenuPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 189, 70));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1280, 720));
 
         pack();
         setLocationRelativeTo(null);
@@ -302,6 +315,10 @@ public class Dashboardview extends javax.swing.JFrame {
     private void UserLogsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UserLogsActionPerformed
         layout.show(DisplayPanel, "UserLogs");
     }//GEN-LAST:event_UserLogsActionPerformed
+
+    private void SuppliersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SuppliersButtonActionPerformed
+        layout.show(DisplayPanel, "Suppliers");
+    }//GEN-LAST:event_SuppliersButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -348,13 +365,13 @@ public class Dashboardview extends javax.swing.JFrame {
     private javax.swing.JPanel NavPanel;
     private javax.swing.JButton ProductButton;
     private javax.swing.JButton SaleButton;
+    private javax.swing.JButton SuppliersButton;
     private javax.swing.JButton UserLogs;
     private javax.swing.JButton Users;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     // End of variables declaration//GEN-END:variables

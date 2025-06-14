@@ -4,7 +4,8 @@
  */
 package ISMS.views;
 
-import ISMS.DAO.Dbconnect;
+import ISMS.models.Hashpassword;
+import ISMS.models.Dbconnect;
 import ISMS.models.*;
 import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
@@ -151,9 +152,9 @@ public class LoginView extends javax.swing.JFrame {
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         String username = userText.getText();
-        String password = new String(passText.getPassword());
+        String hashpassword = Hashpassword.hashPassword(new String(passText.getPassword()));
 
-        user = new Dbconnect().loginUser(username, password); // now user is initialized
+        user = new Dbconnect().loginUser(username, hashpassword); // now user is initialized
 
         if (user != null) {
             inTime = LocalDateTime.now();

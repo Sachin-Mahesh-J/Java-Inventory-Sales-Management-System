@@ -36,10 +36,11 @@ public class InventoryView extends javax.swing.JPanel {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
-        setMaximumSize(new java.awt.Dimension(1050, 521));
-        setMinimumSize(new java.awt.Dimension(1050, 521));
-        setPreferredSize(new java.awt.Dimension(1050, 521));
+        setMaximumSize(new java.awt.Dimension(1050, 570));
+        setMinimumSize(new java.awt.Dimension(1050, 570));
+        setPreferredSize(new java.awt.Dimension(1050, 570));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N

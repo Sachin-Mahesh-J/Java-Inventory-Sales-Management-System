@@ -8,7 +8,7 @@ package ISMS.views;
  *
  * @author sachi
  */
-import ISMS.DAO.Dbconnect;
+import ISMS.models.Dbconnect;
 import java.sql.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,14 +24,18 @@ public class BranchView extends javax.swing.JPanel {
         tblBranches.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int row = tblBranches.getSelectedRow();
-                if (row >= 0) {
-                    BranchNametxt.setText(tblBranches.getValueAt(row, 1).toString());
-                    BranchLocationtxt.setText(tblBranches.getValueAt(row, 2).toString());
-                }
+                selectedrow();
             }
         });
 
+    }
+
+    private void selectedrow() {
+        int row = tblBranches.getSelectedRow();
+        if (row >= 0) {
+            BranchNametxt.setText(tblBranches.getValueAt(row, 1).toString());
+            BranchLocationtxt.setText(tblBranches.getValueAt(row, 2).toString());
+        }
     }
 
     public void addBranch(String name, String location) {
@@ -126,16 +130,18 @@ public class BranchView extends javax.swing.JPanel {
         Refreshbtn = new javax.swing.JButton();
         Deletebtn = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
-        setMaximumSize(new java.awt.Dimension(1050, 521));
-        setMinimumSize(new java.awt.Dimension(1050, 521));
-        setPreferredSize(new java.awt.Dimension(1050, 521));
+        setMaximumSize(new java.awt.Dimension(1050, 570));
+        setMinimumSize(new java.awt.Dimension(1050, 570));
+        setPreferredSize(new java.awt.Dimension(1050, 570));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
         jLabel1.setText("Branches:");
         add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 123, 36));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add a New Branch", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Serif", 1, 18))); // NOI18N
         jPanel1.setMaximumSize(new java.awt.Dimension(320, 463));
         jPanel1.setMinimumSize(new java.awt.Dimension(320, 463));
@@ -241,6 +247,7 @@ public class BranchView extends javax.swing.JPanel {
         add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 54, -1));
 
         Searchtxt.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        Searchtxt.setActionCommand("<Not Set>");
         Searchtxt.setMinimumSize(new java.awt.Dimension(250, 30));
         Searchtxt.setPreferredSize(new java.awt.Dimension(250, 30));
         Searchtxt.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -311,7 +318,7 @@ public class BranchView extends javax.swing.JPanel {
             int id = (int) tblBranches.getValueAt(selectedRow, 0);
             deleteBranch(id);
         } else {
-            JOptionPane.showMessageDialog(this, "Please select a branch to update.");
+            JOptionPane.showMessageDialog(this, "Please select a branch to delete.");
         }
     }//GEN-LAST:event_DeletebtnActionPerformed
 

@@ -43,16 +43,18 @@ public class ProductView extends javax.swing.JPanel {
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
-        setMaximumSize(new java.awt.Dimension(1050, 521));
-        setMinimumSize(new java.awt.Dimension(1050, 521));
-        setPreferredSize(new java.awt.Dimension(1050, 521));
+        setMaximumSize(new java.awt.Dimension(1050, 570));
+        setMinimumSize(new java.awt.Dimension(1050, 570));
+        setPreferredSize(new java.awt.Dimension(1050, 570));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
         jLabel1.setText("Products:");
         add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 123, 36));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add a New Products", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Serif", 1, 18))); // NOI18N
         jPanel1.setMaximumSize(new java.awt.Dimension(320, 463));
         jPanel1.setMinimumSize(new java.awt.Dimension(320, 463));

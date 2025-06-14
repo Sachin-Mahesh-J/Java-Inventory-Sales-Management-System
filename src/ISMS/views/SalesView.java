@@ -37,16 +37,16 @@ public class SalesView extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jButton9 = new javax.swing.JButton();
+        jSpinner1 = new javax.swing.JSpinner();
         jLabel7 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        setMaximumSize(new java.awt.Dimension(1050, 521));
-        setMinimumSize(new java.awt.Dimension(1050, 521));
-        setPreferredSize(new java.awt.Dimension(1050, 521));
+        setMaximumSize(new java.awt.Dimension(1050, 570));
+        setMinimumSize(new java.awt.Dimension(1050, 570));
+        setPreferredSize(new java.awt.Dimension(1050, 570));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
@@ -112,6 +112,7 @@ public class SalesView extends javax.swing.JPanel {
         jButton7.setText("Load Products");
         add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 60, 140, 30));
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add to Cart", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Serif", 1, 18))); // NOI18N
         jPanel2.setMaximumSize(new java.awt.Dimension(320, 463));
         jPanel2.setMinimumSize(new java.awt.Dimension(320, 463));
@@ -131,12 +132,6 @@ public class SalesView extends javax.swing.JPanel {
         jTextField3.setPreferredSize(new java.awt.Dimension(180, 30));
         jPanel2.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 70, -1, -1));
 
-        jTextField4.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField4.setMaximumSize(new java.awt.Dimension(180, 30));
-        jTextField4.setMinimumSize(new java.awt.Dimension(180, 30));
-        jTextField4.setPreferredSize(new java.awt.Dimension(180, 30));
-        jPanel2.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 60, -1));
-
         jLabel6.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
         jLabel6.setText("Qty:");
         jLabel6.setMaximumSize(new java.awt.Dimension(80, 30));
@@ -150,6 +145,10 @@ public class SalesView extends javax.swing.JPanel {
         jButton9.setMinimumSize(new java.awt.Dimension(95, 30));
         jButton9.setPreferredSize(new java.awt.Dimension(95, 30));
         jPanel2.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 70, 120, -1));
+
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel());
+        jSpinner1.setPreferredSize(new java.awt.Dimension(95, 30));
+        jPanel2.add(jSpinner1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 60, -1));
 
         add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 98, 620, 120));
 
@@ -177,8 +176,8 @@ public class SalesView extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }
