@@ -21,12 +21,12 @@ public class BranchView extends javax.swing.JPanel {
     public BranchView() {
         initComponents();
         loadBranches("");
-        tblBranches.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                selectedrow();
-            }
-        });
+//        tblBranches.addMouseListener(new java.awt.event.MouseAdapter() {
+//            @Override
+//            public void mouseClicked(java.awt.event.MouseEvent evt) {
+//                selectedrow();
+//            }
+//        });
 
     }
 
@@ -49,6 +49,7 @@ public class BranchView extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error adding branch: " + e.getMessage());
         }
+        
 
     }
 
@@ -236,6 +237,11 @@ public class BranchView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblBranches.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblBranchesMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblBranches);
 
         add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 45, -1, -1));
@@ -267,7 +273,7 @@ public class BranchView extends javax.swing.JPanel {
 
         Deletebtn.setBackground(new java.awt.Color(204, 153, 0));
         Deletebtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        Deletebtn.setText("Detete Selected");
+        Deletebtn.setText("Delete Selected");
         Deletebtn.setMaximumSize(new java.awt.Dimension(88, 30));
         Deletebtn.setMinimumSize(new java.awt.Dimension(88, 30));
         Deletebtn.setPreferredSize(new java.awt.Dimension(88, 30));
@@ -331,6 +337,10 @@ public class BranchView extends javax.swing.JPanel {
         String keyword = Searchtxt.getText();
         loadBranches(keyword);
     }//GEN-LAST:event_SearchtxtKeyPressed
+
+    private void tblBranchesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBranchesMouseClicked
+        selectedrow();
+    }//GEN-LAST:event_tblBranchesMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

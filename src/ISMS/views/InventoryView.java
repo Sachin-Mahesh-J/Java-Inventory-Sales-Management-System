@@ -4,6 +4,11 @@
  */
 package ISMS.views;
 
+import ISMS.models.*;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sachi
@@ -15,6 +20,62 @@ public class InventoryView extends javax.swing.JPanel {
      */
     public InventoryView() {
         initComponents();
+        loadBranches();
+    }
+
+    private void loadBranches() {
+        try (Connection con = Dbconnect.getConnection(); Statement stmt = con.createStatement(); ResultSet rs = stmt.executeQuery("SELECT branch_id, name FROM branch")) {
+
+            cmbBranch.removeAllItems();
+            cmbBranch.addItem(new ComboItem(0, "Select a branch"));
+            while (rs.next()) {
+                int id = rs.getInt("branch_id");
+                String name = rs.getString("name");
+
+                ComboItem item = new ComboItem(id, name);
+                cmbBranch.addItem(item);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error loading branches: " + ex.getMessage());
+        }
+    }
+
+    public void loadInventory(int branchId) {
+        Connection conn = Dbconnect.getConnection();
+        DefaultTableModel model = (DefaultTableModel) tblInventory.getModel();
+        model.setRowCount(0);
+
+        String sql = "SELECT i.product_id, p.name, i.stock "
+                + "FROM Inventory i JOIN Product p ON i.product_id = p.product_id "
+                + "WHERE i.branch_id = ?";
+        try (PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setInt(1, branchId);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("product_id"),
+                    rs.getString("name"),
+                    rs.getInt("stock")
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading inventory: " + e.getMessage());
+        }
+    }
+
+    public void updateStock(int branchId, int productId, int newStock) {
+        String sql = "UPDATE Inventory SET stock = ? WHERE branch_id = ? AND product_id = ?";
+        try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setInt(1, newStock);
+            pst.setInt(2, branchId);
+            pst.setInt(3, productId);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Stock updated.");
+            loadInventory(branchId);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error updating stock: " + e.getMessage());
+        }
     }
 
     /**
@@ -29,12 +90,12 @@ public class InventoryView extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
+        cmbBranch = new javax.swing.JComboBox<>();
+        btnLoadStock = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        tblInventory = new javax.swing.JTable();
+        btnReset = new javax.swing.JButton();
+        btnUpdateStock = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
@@ -56,22 +117,26 @@ public class InventoryView extends javax.swing.JPanel {
         jLabel2.setPreferredSize(new java.awt.Dimension(100, 30));
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 100, 30));
 
-        jComboBox1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setMaximumSize(new java.awt.Dimension(200, 30));
-        jComboBox1.setMinimumSize(new java.awt.Dimension(200, 30));
-        jComboBox1.setPreferredSize(new java.awt.Dimension(200, 30));
-        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, 200, 30));
+        cmbBranch.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cmbBranch.setMaximumSize(new java.awt.Dimension(200, 30));
+        cmbBranch.setMinimumSize(new java.awt.Dimension(200, 30));
+        cmbBranch.setPreferredSize(new java.awt.Dimension(200, 30));
+        jPanel1.add(cmbBranch, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, 200, 30));
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton1.setText("Load Stock");
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 10, 120, 30));
+        btnLoadStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnLoadStock.setText("Load Stock");
+        btnLoadStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLoadStockActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnLoadStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 10, 120, 30));
 
         jScrollPane1.setMaximumSize(new java.awt.Dimension(1010, 350));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(1010, 350));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(1010, 350));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblInventory.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -87,33 +152,57 @@ public class InventoryView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblInventory);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 1010, 350));
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton2.setText("Back");
-        jButton2.setPreferredSize(new java.awt.Dimension(75, 30));
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 410, 90, -1));
+        btnReset.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnReset.setText("Reset");
+        btnReset.setPreferredSize(new java.awt.Dimension(75, 30));
+        jPanel1.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 410, 90, -1));
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jButton3.setText("Update Stock");
-        jButton3.setPreferredSize(new java.awt.Dimension(75, 30));
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 410, 130, -1));
+        btnUpdateStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnUpdateStock.setText("Update Stock");
+        btnUpdateStock.setPreferredSize(new java.awt.Dimension(75, 30));
+        btnUpdateStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateStockActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnUpdateStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 410, 130, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 52, 1030, 460));
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnLoadStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadStockActionPerformed
+        ComboItem selectedBranch = (ComboItem) cmbBranch.getSelectedItem();
+        int brnachid = selectedBranch.getId();
+        loadInventory(brnachid);
+    }//GEN-LAST:event_btnLoadStockActionPerformed
+
+    private void btnUpdateStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateStockActionPerformed
+        int selectedRow = tblInventory.getSelectedRow();
+        if (selectedRow != -1) {
+            int productId = (int) tblInventory.getValueAt(selectedRow, 0);
+            ComboItem selectedBranch = (ComboItem) cmbBranch.getSelectedItem();
+            int branchId = selectedBranch.getId();
+            int newStock = (int) tblInventory.getValueAt(selectedRow, 3);
+            updateStock(branchId, productId, newStock);
+        } else {
+            JOptionPane.showMessageDialog(this, "Select a product to update.");
+        }
+    }//GEN-LAST:event_btnUpdateStockActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnLoadStock;
+    private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnUpdateStock;
+    private javax.swing.JComboBox<ISMS.models.ComboItem> cmbBranch;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblInventory;
     // End of variables declaration//GEN-END:variables
 }

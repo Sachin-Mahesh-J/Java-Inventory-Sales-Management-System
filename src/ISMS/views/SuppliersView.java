@@ -14,6 +14,7 @@ public class SuppliersView extends javax.swing.JPanel {
         initComponents();
         loadProducts();
         loadSupplier("");
+        loadProductSupplier("");
     }
 
     private void loadProducts() {
@@ -86,6 +87,83 @@ public class SuppliersView extends javax.swing.JPanel {
         }
     }
 
+    public void deleteSupplier(int id) {
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure?", "Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String sql = "DELETE FROM Supplier WHERE supplier_id=?";
+            try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
+                pst.setInt(1, id);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Supplier deleted.");
+                loadSupplier("");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error deleting Supplier: " + e.getMessage());
+            }
+        }
+    }
+
+    public void addProductSupplier(int Proudctid, int Supplierid) {
+        String query = "INSERT INTO productsupplier (product_id, supplier_id) VALUES (?, ?)";
+        try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setInt(1, Proudctid);
+            pst.setInt(2, Supplierid);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Proudct Connected to Supplier successfully!");
+            loadProductSupplier("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error Connecting Proudct to Supplier: " + e.getMessage());
+        }
+    }
+
+    public void loadProductSupplier(String keyword) {
+        Connection conn = Dbconnect.getConnection();
+        DefaultTableModel model = (DefaultTableModel) tblProductSupplier.getModel();
+        model.setRowCount(0); // Clear existing data
+
+        String query = "SELECT ps.product_supplier_id, "
+                + "p.product_id, p.name AS product_name, "
+                + "s.supplier_id, s.name AS supplier_name "
+                + "FROM ProductSupplier ps "
+                + "JOIN Product p ON ps.product_id = p.product_id "
+                + "JOIN Supplier s ON ps.supplier_id = s.supplier_id "
+                + "WHERE p.name LIKE ? OR s.name LIKE ?";
+
+        try (PreparedStatement pst = conn.prepareStatement(query)) {
+            String searchPattern = "%" + keyword + "%";
+            pst.setString(1, searchPattern);
+            pst.setString(2, searchPattern);
+
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("product_supplier_id"),
+                    rs.getInt("product_id"),
+                    rs.getString("product_name"),
+                    rs.getInt("supplier_id"),
+                    rs.getString("supplier_name")
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading product-supplier data: " + e.getMessage());
+        }
+    }
+
+    public void deleteProductSupplier(int id) {
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this product-supplier mapping?", "Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String sql = "DELETE FROM ProductSupplier WHERE product_supplier_id = ?";
+            try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(sql)) {
+                pst.setInt(1, id);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Product-Supplier mapping deleted.");
+                loadProductSupplier(""); // refresh table
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error deleting Product-Supplier: " + e.getMessage());
+            }
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -99,30 +177,30 @@ public class SuppliersView extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        UpdateSupplierbtn = new javax.swing.JButton();
+        btnLinkProduct = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblProductSupplier = new javax.swing.JTable();
         cmbProduct = new javax.swing.JComboBox<>();
         txtSupplier_name = new javax.swing.JTextField();
         btnClear1 = new javax.swing.JButton();
-        jTextField6 = new javax.swing.JTextField();
+        txtSearchProductSupplier = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        btnrefresh2 = new javax.swing.JButton();
+        btnDeletePro_Sup = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblSuppliers = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        txtSearchSupplier = new javax.swing.JTextField();
+        btnrefresh1 = new javax.swing.JButton();
+        btnDeleteSuppliers = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         txtSupplierName = new javax.swing.JTextField();
         txtSupplierContact = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        btnAddSupplier1 = new javax.swing.JButton();
-        UpdateSupplierbtn1 = new javax.swing.JButton();
-        btnClear2 = new javax.swing.JButton();
+        btnAddSupplier = new javax.swing.JButton();
+        UpdateSupplierbtn = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(1050, 570));
@@ -155,18 +233,18 @@ public class SuppliersView extends javax.swing.JPanel {
         jLabel3.setPreferredSize(new java.awt.Dimension(80, 30));
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 30, -1, -1));
 
-        UpdateSupplierbtn.setBackground(new java.awt.Color(0, 153, 51));
-        UpdateSupplierbtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        UpdateSupplierbtn.setText("Link Product to Supplier");
-        UpdateSupplierbtn.setMaximumSize(new java.awt.Dimension(70, 30));
-        UpdateSupplierbtn.setMinimumSize(new java.awt.Dimension(70, 30));
-        UpdateSupplierbtn.setPreferredSize(new java.awt.Dimension(70, 30));
-        UpdateSupplierbtn.addActionListener(new java.awt.event.ActionListener() {
+        btnLinkProduct.setBackground(new java.awt.Color(0, 153, 51));
+        btnLinkProduct.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnLinkProduct.setText("Link Product to Supplier");
+        btnLinkProduct.setMaximumSize(new java.awt.Dimension(70, 30));
+        btnLinkProduct.setMinimumSize(new java.awt.Dimension(70, 30));
+        btnLinkProduct.setPreferredSize(new java.awt.Dimension(70, 30));
+        btnLinkProduct.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UpdateSupplierbtnActionPerformed(evt);
+                btnLinkProductActionPerformed(evt);
             }
         });
-        jPanel1.add(UpdateSupplierbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 60, 190, -1));
+        jPanel1.add(btnLinkProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 60, 190, -1));
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Suppliers products", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
 
@@ -212,10 +290,15 @@ public class SuppliersView extends javax.swing.JPanel {
         });
         jPanel1.add(btnClear1, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, -1, 30));
 
-        jTextField6.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField6.setMinimumSize(new java.awt.Dimension(250, 30));
-        jTextField6.setPreferredSize(new java.awt.Dimension(250, 30));
-        jPanel1.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 10, 190, -1));
+        txtSearchProductSupplier.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        txtSearchProductSupplier.setMinimumSize(new java.awt.Dimension(250, 30));
+        txtSearchProductSupplier.setPreferredSize(new java.awt.Dimension(250, 30));
+        txtSearchProductSupplier.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchProductSupplierKeyPressed(evt);
+            }
+        });
+        jPanel1.add(txtSearchProductSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 10, 190, -1));
 
         jLabel8.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
         jLabel8.setText("Search:");
@@ -223,16 +306,21 @@ public class SuppliersView extends javax.swing.JPanel {
         jLabel8.setPreferredSize(new java.awt.Dimension(90, 30));
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, 54, -1));
 
-        jButton6.setText("Refresh");
-        jPanel1.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 13, -1, -1));
+        btnrefresh2.setText("Refresh");
+        jPanel1.add(btnrefresh2, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 13, -1, -1));
 
-        jButton7.setBackground(new java.awt.Color(204, 153, 0));
-        jButton7.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton7.setText("Detete Selected");
-        jButton7.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton7.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton7.setPreferredSize(new java.awt.Dimension(88, 30));
-        jPanel1.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 260, 130, 30));
+        btnDeletePro_Sup.setBackground(new java.awt.Color(204, 153, 0));
+        btnDeletePro_Sup.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnDeletePro_Sup.setText("Delete Selected");
+        btnDeletePro_Sup.setMaximumSize(new java.awt.Dimension(88, 30));
+        btnDeletePro_Sup.setMinimumSize(new java.awt.Dimension(88, 30));
+        btnDeletePro_Sup.setPreferredSize(new java.awt.Dimension(88, 30));
+        btnDeletePro_Sup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeletePro_SupActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnDeletePro_Sup, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 260, 130, 30));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 1030, 300));
 
@@ -257,6 +345,11 @@ public class SuppliersView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblSuppliers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSuppliersMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblSuppliers);
 
         add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 45, -1, 200));
@@ -267,21 +360,31 @@ public class SuppliersView extends javax.swing.JPanel {
         jLabel7.setPreferredSize(new java.awt.Dimension(90, 30));
         add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 54, -1));
 
-        jTextField5.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField5.setMinimumSize(new java.awt.Dimension(250, 30));
-        jTextField5.setPreferredSize(new java.awt.Dimension(250, 30));
-        add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, -1, -1));
+        txtSearchSupplier.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        txtSearchSupplier.setMinimumSize(new java.awt.Dimension(250, 30));
+        txtSearchSupplier.setPreferredSize(new java.awt.Dimension(250, 30));
+        txtSearchSupplier.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchSupplierActionPerformed(evt);
+            }
+        });
+        add(txtSearchSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, -1, -1));
 
-        jButton4.setText("Refresh");
-        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 13, -1, -1));
+        btnrefresh1.setText("Refresh");
+        add(btnrefresh1, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 13, -1, -1));
 
-        jButton5.setBackground(new java.awt.Color(204, 153, 0));
-        jButton5.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton5.setText("Detete Selected");
-        jButton5.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton5.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton5.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 250, 130, 30));
+        btnDeleteSuppliers.setBackground(new java.awt.Color(204, 153, 0));
+        btnDeleteSuppliers.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnDeleteSuppliers.setText("Delete Selected");
+        btnDeleteSuppliers.setMaximumSize(new java.awt.Dimension(88, 30));
+        btnDeleteSuppliers.setMinimumSize(new java.awt.Dimension(88, 30));
+        btnDeleteSuppliers.setPreferredSize(new java.awt.Dimension(88, 30));
+        btnDeleteSuppliers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteSuppliersActionPerformed(evt);
+            }
+        });
+        add(btnDeleteSuppliers, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 250, 130, 30));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Add a New Suppliers", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BELOW_TOP, new java.awt.Font("Serif", 1, 18))); // NOI18N
@@ -316,47 +419,69 @@ public class SuppliersView extends javax.swing.JPanel {
         jLabel5.setPreferredSize(new java.awt.Dimension(80, 30));
         jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 75, -1, -1));
 
-        btnAddSupplier1.setBackground(new java.awt.Color(0, 204, 204));
-        btnAddSupplier1.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        btnAddSupplier1.setText("Add");
-        btnAddSupplier1.setMaximumSize(new java.awt.Dimension(70, 30));
-        btnAddSupplier1.setMinimumSize(new java.awt.Dimension(70, 30));
-        btnAddSupplier1.setPreferredSize(new java.awt.Dimension(70, 30));
-        btnAddSupplier1.addActionListener(new java.awt.event.ActionListener() {
+        btnAddSupplier.setBackground(new java.awt.Color(0, 204, 204));
+        btnAddSupplier.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnAddSupplier.setText("Add");
+        btnAddSupplier.setMaximumSize(new java.awt.Dimension(70, 30));
+        btnAddSupplier.setMinimumSize(new java.awt.Dimension(70, 30));
+        btnAddSupplier.setPreferredSize(new java.awt.Dimension(70, 30));
+        btnAddSupplier.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddSupplier1ActionPerformed(evt);
+                btnAddSupplierActionPerformed(evt);
             }
         });
-        jPanel2.add(btnAddSupplier1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
+        jPanel2.add(btnAddSupplier, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
 
-        UpdateSupplierbtn1.setBackground(new java.awt.Color(0, 153, 51));
-        UpdateSupplierbtn1.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        UpdateSupplierbtn1.setText("Update");
-        UpdateSupplierbtn1.setMaximumSize(new java.awt.Dimension(70, 30));
-        UpdateSupplierbtn1.setMinimumSize(new java.awt.Dimension(70, 30));
-        UpdateSupplierbtn1.setPreferredSize(new java.awt.Dimension(70, 30));
-        UpdateSupplierbtn1.addActionListener(new java.awt.event.ActionListener() {
+        UpdateSupplierbtn.setBackground(new java.awt.Color(0, 153, 51));
+        UpdateSupplierbtn.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        UpdateSupplierbtn.setText("Update");
+        UpdateSupplierbtn.setMaximumSize(new java.awt.Dimension(70, 30));
+        UpdateSupplierbtn.setMinimumSize(new java.awt.Dimension(70, 30));
+        UpdateSupplierbtn.setPreferredSize(new java.awt.Dimension(70, 30));
+        UpdateSupplierbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UpdateSupplierbtn1ActionPerformed(evt);
+                UpdateSupplierbtnActionPerformed(evt);
             }
         });
-        jPanel2.add(UpdateSupplierbtn1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 80, -1));
+        jPanel2.add(UpdateSupplierbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 80, -1));
 
-        btnClear2.setBackground(new java.awt.Color(255, 255, 204));
-        btnClear2.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        btnClear2.setText("Clear");
-        btnClear2.setMaximumSize(new java.awt.Dimension(70, 30));
-        btnClear2.setMinimumSize(new java.awt.Dimension(70, 30));
-        btnClear2.setPreferredSize(new java.awt.Dimension(70, 30));
-        btnClear2.addActionListener(new java.awt.event.ActionListener() {
+        btnClear.setBackground(new java.awt.Color(255, 255, 204));
+        btnClear.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnClear.setText("Clear");
+        btnClear.setMaximumSize(new java.awt.Dimension(70, 30));
+        btnClear.setMinimumSize(new java.awt.Dimension(70, 30));
+        btnClear.setPreferredSize(new java.awt.Dimension(70, 30));
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClear2ActionPerformed(evt);
+                btnClearActionPerformed(evt);
             }
         });
-        jPanel2.add(btnClear2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 150, -1, -1));
+        jPanel2.add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 150, -1, -1));
 
         add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 45, 320, 200));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnLinkProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLinkProductActionPerformed
+        int selectedRow = tblSuppliers.getSelectedRow();
+        if (selectedRow >= 0) {
+            int Supplierid = (int) tblSuppliers.getValueAt(selectedRow, 0);
+            ComboItem item = (ComboItem) cmbProduct.getSelectedItem();
+            int Productid = item.getId();
+            addProductSupplier(Productid, Supplierid);
+        }
+    }//GEN-LAST:event_btnLinkProductActionPerformed
+
+    private void btnAddSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSupplierActionPerformed
+        String Name = txtSupplierName.getText();
+        String contact = txtSupplierContact.getText();
+
+        addSupplier(Name, contact);
+    }//GEN-LAST:event_btnAddSupplierActionPerformed
+
+    private void btnClear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear1ActionPerformed
+        txtSupplier_name.setText("");
+        cmbProduct.setSelectedIndex(0);
+    }//GEN-LAST:event_btnClear1ActionPerformed
 
     private void UpdateSupplierbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateSupplierbtnActionPerformed
         int selectedRow = tblSuppliers.getSelectedRow();
@@ -376,37 +501,64 @@ public class SuppliersView extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_UpdateSupplierbtnActionPerformed
 
-    private void btnAddSupplier1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddSupplier1ActionPerformed
-        String Name = txtSupplierName.getText();
-        String contact = txtSupplierContact.getText();
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        txtSupplierName.setText("");
+        txtSupplierContact.setText("");
+    }//GEN-LAST:event_btnClearActionPerformed
 
-        addSupplier(Name, contact);
-    }//GEN-LAST:event_btnAddSupplier1ActionPerformed
+    private void tblSuppliersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSuppliersMouseClicked
+        int selectedRow = tblSuppliers.getSelectedRow();
+        if (selectedRow >= 0) {
+            int id = (int) tblSuppliers.getValueAt(selectedRow, 0);
+            txtSupplierName.setText(tblSuppliers.getValueAt(selectedRow, 1).toString());
+            txtSupplierContact.setText(tblSuppliers.getValueAt(selectedRow, 2).toString());
+            txtSupplier_name.setText(tblSuppliers.getValueAt(selectedRow, 1).toString());
+        }
+    }//GEN-LAST:event_tblSuppliersMouseClicked
 
-    private void btnClear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnClear1ActionPerformed
+    private void btnDeleteSuppliersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteSuppliersActionPerformed
+        int selectedRow = tblSuppliers.getSelectedRow();
+        if (selectedRow >= 0) {
+            int id = (int) tblSuppliers.getValueAt(selectedRow, 0);
+            deleteSupplier(id);
+        }else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
+    }//GEN-LAST:event_btnDeleteSuppliersActionPerformed
 
-    private void UpdateSupplierbtn1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateSupplierbtn1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_UpdateSupplierbtn1ActionPerformed
+    private void txtSearchSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchSupplierActionPerformed
+        String Keyword = txtSearchSupplier.getText();
+        loadSupplier(Keyword);
+    }//GEN-LAST:event_txtSearchSupplierActionPerformed
 
-    private void btnClear2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClear2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnClear2ActionPerformed
+    private void txtSearchProductSupplierKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchProductSupplierKeyPressed
+        String KeyWord = txtSearchProductSupplier.getText();
+        loadProductSupplier(KeyWord);
+    }//GEN-LAST:event_txtSearchProductSupplierKeyPressed
+
+    private void btnDeletePro_SupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeletePro_SupActionPerformed
+        int selectedRow = tblProductSupplier.getSelectedRow();
+        if (selectedRow != -1) {
+            int id = (int) tblProductSupplier.getValueAt(selectedRow, 0);
+            deleteProductSupplier(id);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
+
+    }//GEN-LAST:event_btnDeletePro_SupActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton UpdateSupplierbtn;
-    private javax.swing.JButton UpdateSupplierbtn1;
-    private javax.swing.JButton btnAddSupplier1;
+    private javax.swing.JButton btnAddSupplier;
+    private javax.swing.JButton btnClear;
     private javax.swing.JButton btnClear1;
-    private javax.swing.JButton btnClear2;
+    private javax.swing.JButton btnDeletePro_Sup;
+    private javax.swing.JButton btnDeleteSuppliers;
+    private javax.swing.JButton btnLinkProduct;
+    private javax.swing.JButton btnrefresh1;
+    private javax.swing.JButton btnrefresh2;
     private javax.swing.JComboBox<ComboItem> cmbProduct;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -418,10 +570,10 @@ public class SuppliersView extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     private javax.swing.JTable tblProductSupplier;
     private javax.swing.JTable tblSuppliers;
+    private javax.swing.JTextField txtSearchProductSupplier;
+    private javax.swing.JTextField txtSearchSupplier;
     private javax.swing.JTextField txtSupplierContact;
     private javax.swing.JTextField txtSupplierName;
     private javax.swing.JTextField txtSupplier_name;

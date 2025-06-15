@@ -146,7 +146,7 @@ public class SalesView extends javax.swing.JPanel {
         jButton9.setPreferredSize(new java.awt.Dimension(95, 30));
         jPanel2.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 70, 120, -1));
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel());
+        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         jSpinner1.setPreferredSize(new java.awt.Dimension(95, 30));
         jPanel2.add(jSpinner1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 60, -1));
 

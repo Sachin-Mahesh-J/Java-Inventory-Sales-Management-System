@@ -46,7 +46,7 @@ public class UsersView extends javax.swing.JPanel {
                 pst.setString(1, likeKeyword);
                 pst.setString(2, likeKeyword);
                 pst.setString(3, likeKeyword);
-                pst.setString(3, likeKeyword);
+                pst.setString(4, likeKeyword);
             }
 
             ResultSet rs = pst.executeQuery();
@@ -117,9 +117,8 @@ public class UsersView extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Please select a valid branch.");
             return;
         }
-        String usertype = cmbUsertype.getSelectedItem().toString();
 
-        if (usertype.equals("Select Usertype")) {
+        if (userType.equals("Select Usertype")) {
             JOptionPane.showMessageDialog(this, "Please select a valid user type.");
             return;
         }
@@ -167,14 +166,36 @@ public class UsersView extends javax.swing.JPanel {
 
         String name = txtName.getText();
         String username = txtUsername.getText();
-        String password = Hashpassword.hashPassword(new String(txtPassword.getPassword()));
+        String password = new String(txtPassword.getPassword());
         String phone = txtContact.getText();
         String userType = cmbUsertype.getSelectedItem().toString();
         ComboItem selectedBranch = (ComboItem) cmbBranch.getSelectedItem();
-
+        
         // Validate input
         if (name.isEmpty() || username.isEmpty() || phone.isEmpty() || userType.equals("Select Usertype")) {
             JOptionPane.showMessageDialog(this, "Please fill all fields correctly.");
+            return;
+        }
+        if (password.length() < 6) {
+            JOptionPane.showMessageDialog(this, "Password must be at least 6 characters long.");
+            return;
+        }
+
+        // Validate phone number
+        if (!phone.matches("\\d{10,15}")) {
+            JOptionPane.showMessageDialog(this, "Phone number must be 10–15 digits.");
+            return;
+        }
+
+        // Validate branch
+        if (selectedBranch == null || selectedBranch.getId() == 0) {
+            JOptionPane.showMessageDialog(this, "Please select a valid branch.");
+            return;
+        }
+        String usertype = cmbUsertype.getSelectedItem().toString();
+
+        if (usertype.equals("Select Usertype")) {
+            JOptionPane.showMessageDialog(this, "Please select a valid user type.");
             return;
         }
 
@@ -227,6 +248,44 @@ public class UsersView extends javax.swing.JPanel {
         txtContact.setText("");
         cmbBranch.setSelectedIndex(0);
         cmbUsertype.setSelectedIndex(0);
+    }
+
+    private void selectedrow() {
+        int selectedRow = Userstable.getSelectedRow();
+        if (selectedRow  >= 0) {
+            selectedUserId = Integer.parseInt(Userstable.getValueAt(selectedRow, 0).toString());
+
+            // Load other fields as before
+            txtName.setText(Userstable.getValueAt(selectedRow, 1).toString());
+            txtUsername.setText(Userstable.getValueAt(selectedRow, 2).toString());
+            txtContact.setText(Userstable.getValueAt(selectedRow, 3).toString());
+            cmbUsertype.setSelectedItem(Userstable.getValueAt(selectedRow, 5).toString());
+            int branchId = Integer.parseInt(Userstable.getValueAt(selectedRow, 7).toString());
+
+            for (int i = 0; i < cmbBranch.getItemCount(); i++) {
+                ComboItem item = cmbBranch.getItemAt(i);
+                if (item.getId() == branchId) {
+                    cmbBranch.setSelectedIndex(i);
+                    break;
+                }
+            }
+
+        }
+    }
+    
+    public void deleteUser(int id) {
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure?", "Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String query = "DELETE FROM users WHERE id = ?";
+            try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+                pst.setInt(1, id);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "User deleted.");
+                loadUserData("");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error deleting User: " + e.getMessage());
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -450,10 +509,15 @@ public class UsersView extends javax.swing.JPanel {
 
         btnDelete.setBackground(new java.awt.Color(204, 153, 0));
         btnDelete.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        btnDelete.setText("Detete Selected");
+        btnDelete.setText("Delete Selected");
         btnDelete.setMaximumSize(new java.awt.Dimension(88, 30));
         btnDelete.setMinimumSize(new java.awt.Dimension(88, 30));
         btnDelete.setPreferredSize(new java.awt.Dimension(88, 30));
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
         add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 460, 130, 30));
     }// </editor-fold>//GEN-END:initComponents
 
@@ -466,27 +530,7 @@ public class UsersView extends javax.swing.JPanel {
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void UserstableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UserstableMouseClicked
-        int selectedRow = Userstable.getSelectedRow();
-        if (selectedRow != -1) {
-            selectedUserId = Integer.parseInt(Userstable.getValueAt(selectedRow, 0).toString());
-
-            // Load other fields as before
-            txtName.setText(Userstable.getValueAt(selectedRow, 1).toString());
-            txtUsername.setText(Userstable.getValueAt(selectedRow, 2).toString());
-            txtContact.setText(Userstable.getValueAt(selectedRow, 3).toString());
-            cmbUsertype.setSelectedItem(Userstable.getValueAt(selectedRow, 5).toString());
-            int branchId = Integer.parseInt(Userstable.getValueAt(selectedRow, 7).toString());
-
-            for (int i = 0; i < cmbBranch.getItemCount(); i++) {
-                ComboItem item = cmbBranch.getItemAt(i);
-                if (item.getId() == branchId) {
-                    cmbBranch.setSelectedIndex(i);
-                    break;
-                }
-            }
-
-        }
-
+        selectedrow();
     }//GEN-LAST:event_UserstableMouseClicked
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
@@ -504,6 +548,11 @@ public class UsersView extends javax.swing.JPanel {
         loadBranches();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        selectedrow();
+        deleteUser(selectedUserId);
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable Userstable;
@@ -512,7 +561,7 @@ public class UsersView extends javax.swing.JPanel {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JComboBox<ComboItem> cmbBranch;
+    private javax.swing.JComboBox<ISMS.models.ComboItem> cmbBranch;
     private javax.swing.JComboBox<String> cmbUsertype;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

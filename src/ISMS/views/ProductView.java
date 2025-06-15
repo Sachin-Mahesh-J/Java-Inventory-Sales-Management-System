@@ -4,6 +4,11 @@
  */
 package ISMS.views;
 
+import ISMS.models.*;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author sachi
@@ -15,8 +20,77 @@ public class ProductView extends javax.swing.JPanel {
      */
     public ProductView() {
         initComponents();
+        loadProducts("");
     }
+    public void addProduct(String name, String price) {
+        String query = "INSERT INTO product (name, price) VALUES (?, ?)";
+        try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setString(1, name);
+            pst.setString(2, price);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Product added successfully!");
+            loadProducts("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error adding Product: " + e.getMessage());
+        }
 
+    }
+    
+    public void loadProducts(String keyword) {
+        Connection conn = Dbconnect.getConnection();
+        DefaultTableModel model = (DefaultTableModel) tblProducts.getModel();
+        model.setRowCount(0);
+
+        String query = "SELECT * FROM product WHERE name LIKE ? OR price LIKE ?";
+        try (PreparedStatement pst = conn.prepareStatement(query)) {
+            String searchPattern = "%" + keyword + "%";
+            pst.setString(1, searchPattern);
+            pst.setString(2, searchPattern);
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("product_id"),
+                    rs.getString("name"),
+                    rs.getString("price")
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error searching Product: " + e.getMessage());
+        }
+    }
+    
+    public void updateProduct(int id, String name, String price) {
+        String query = "UPDATE product SET name = ?, price = ? WHERE product_id = ?";
+        try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setString(1, name);
+            pst.setString(2, price);
+            pst.setInt(3, id);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Product updated successfully!");
+            loadProducts("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error updating Product: " + e.getMessage());
+        }
+    }
+    
+    public void deleteProduct(int id) {
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure?", "Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String query = "DELETE FROM product WHERE product_id = ?";
+            try (Connection conn = Dbconnect.getConnection(); PreparedStatement pst = conn.prepareStatement(query)) {
+                pst.setInt(1, id);
+                pst.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Product deleted.");
+                loadProducts("");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error deleting Product: " + e.getMessage());
+            }
+        }
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,19 +103,18 @@ public class ProductView extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        txtProductName = new javax.swing.JTextField();
+        txtProductPrice = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnAddProduct = new javax.swing.JButton();
+        btnProductUpdate = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblProducts = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        txtSearch = new javax.swing.JTextField();
+        btnRefresh = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
@@ -68,17 +141,17 @@ public class ProductView extends javax.swing.JPanel {
         jLabel2.setPreferredSize(new java.awt.Dimension(80, 30));
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 35, -1, -1));
 
-        jTextField1.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField1.setMaximumSize(new java.awt.Dimension(180, 30));
-        jTextField1.setMinimumSize(new java.awt.Dimension(180, 30));
-        jTextField1.setPreferredSize(new java.awt.Dimension(180, 30));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 35, -1, -1));
+        txtProductName.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        txtProductName.setMaximumSize(new java.awt.Dimension(180, 30));
+        txtProductName.setMinimumSize(new java.awt.Dimension(180, 30));
+        txtProductName.setPreferredSize(new java.awt.Dimension(180, 30));
+        jPanel1.add(txtProductName, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 35, -1, -1));
 
-        jTextField2.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField2.setMaximumSize(new java.awt.Dimension(180, 30));
-        jTextField2.setMinimumSize(new java.awt.Dimension(180, 30));
-        jTextField2.setPreferredSize(new java.awt.Dimension(180, 30));
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 75, -1, -1));
+        txtProductPrice.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        txtProductPrice.setMaximumSize(new java.awt.Dimension(180, 30));
+        txtProductPrice.setMinimumSize(new java.awt.Dimension(180, 30));
+        txtProductPrice.setPreferredSize(new java.awt.Dimension(180, 30));
+        jPanel1.add(txtProductPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 75, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
         jLabel3.setText("Price:");
@@ -87,29 +160,44 @@ public class ProductView extends javax.swing.JPanel {
         jLabel3.setPreferredSize(new java.awt.Dimension(80, 30));
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 75, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(0, 204, 204));
-        jButton1.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton1.setText("Add");
-        jButton1.setMaximumSize(new java.awt.Dimension(70, 30));
-        jButton1.setMinimumSize(new java.awt.Dimension(70, 30));
-        jButton1.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
+        btnAddProduct.setBackground(new java.awt.Color(0, 204, 204));
+        btnAddProduct.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnAddProduct.setText("Add");
+        btnAddProduct.setMaximumSize(new java.awt.Dimension(70, 30));
+        btnAddProduct.setMinimumSize(new java.awt.Dimension(70, 30));
+        btnAddProduct.setPreferredSize(new java.awt.Dimension(70, 30));
+        btnAddProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddProductActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAddProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
 
-        jButton2.setBackground(new java.awt.Color(0, 153, 51));
-        jButton2.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton2.setText("Save");
-        jButton2.setMaximumSize(new java.awt.Dimension(70, 30));
-        jButton2.setMinimumSize(new java.awt.Dimension(70, 30));
-        jButton2.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, -1, -1));
+        btnProductUpdate.setBackground(new java.awt.Color(0, 153, 51));
+        btnProductUpdate.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnProductUpdate.setText("Update");
+        btnProductUpdate.setMaximumSize(new java.awt.Dimension(70, 30));
+        btnProductUpdate.setMinimumSize(new java.awt.Dimension(70, 30));
+        btnProductUpdate.setPreferredSize(new java.awt.Dimension(70, 30));
+        btnProductUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProductUpdateActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnProductUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 80, -1));
 
-        jButton3.setBackground(new java.awt.Color(255, 255, 204));
-        jButton3.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton3.setText("Clear");
-        jButton3.setMaximumSize(new java.awt.Dimension(70, 30));
-        jButton3.setMinimumSize(new java.awt.Dimension(70, 30));
-        jButton3.setPreferredSize(new java.awt.Dimension(70, 30));
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 150, -1, -1));
+        btnClear.setBackground(new java.awt.Color(255, 255, 204));
+        btnClear.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnClear.setText("Clear");
+        btnClear.setMaximumSize(new java.awt.Dimension(70, 30));
+        btnClear.setMinimumSize(new java.awt.Dimension(70, 30));
+        btnClear.setPreferredSize(new java.awt.Dimension(70, 30));
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 150, -1, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 45, 320, -1));
 
@@ -118,7 +206,7 @@ public class ProductView extends javax.swing.JPanel {
         jScrollPane1.setMinimumSize(new java.awt.Dimension(701, 392));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(701, 392));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblProducts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -134,7 +222,12 @@ public class ProductView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tblProducts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblProductsMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblProducts);
 
         add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 45, -1, -1));
 
@@ -144,48 +237,108 @@ public class ProductView extends javax.swing.JPanel {
         jLabel7.setPreferredSize(new java.awt.Dimension(90, 30));
         add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 54, -1));
 
-        jTextField5.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
-        jTextField5.setMinimumSize(new java.awt.Dimension(250, 30));
-        jTextField5.setPreferredSize(new java.awt.Dimension(250, 30));
-        add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, -1, -1));
+        txtSearch.setFont(new java.awt.Font("Serif", 0, 14)); // NOI18N
+        txtSearch.setMinimumSize(new java.awt.Dimension(250, 30));
+        txtSearch.setPreferredSize(new java.awt.Dimension(250, 30));
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchKeyPressed(evt);
+            }
+        });
+        add(txtSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, -1, -1));
 
-        jButton4.setText("Refresh");
-        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 13, -1, -1));
+        btnRefresh.setText("Refresh");
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        add(btnRefresh, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 13, -1, -1));
 
-        jButton5.setBackground(new java.awt.Color(204, 153, 0));
-        jButton5.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton5.setText("Detete Selected");
-        jButton5.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton5.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton5.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 460, 130, 30));
-
-        jButton6.setBackground(new java.awt.Color(204, 153, 0));
-        jButton6.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton6.setText("Edit Selected");
-        jButton6.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton6.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton6.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 460, 130, 30));
+        btnDelete.setBackground(new java.awt.Color(204, 153, 0));
+        btnDelete.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
+        btnDelete.setText("Delete Selected");
+        btnDelete.setMaximumSize(new java.awt.Dimension(88, 30));
+        btnDelete.setMinimumSize(new java.awt.Dimension(88, 30));
+        btnDelete.setPreferredSize(new java.awt.Dimension(88, 30));
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+        add(btnDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 450, 130, 30));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAddProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProductActionPerformed
+        addProduct(txtProductName.getText(), txtProductPrice.getText());
+    }//GEN-LAST:event_btnAddProductActionPerformed
+
+    private void tblProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductsMouseClicked
+        int row = tblProducts.getSelectedRow();
+        if (row >= 0) {
+            txtProductName.setText(tblProducts.getValueAt(row, 1).toString());
+            txtProductPrice.setText(tblProducts.getValueAt(row, 2).toString());
+        }
+    }//GEN-LAST:event_tblProductsMouseClicked
+
+    private void btnProductUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductUpdateActionPerformed
+        int selectedRow = tblProducts.getSelectedRow();
+        if (selectedRow >= 0) {
+            int id = (int) tblProducts.getValueAt(selectedRow, 0);
+            String name = txtProductName.getText();
+            String price = txtProductPrice.getText();
+
+            if (name.isEmpty() || price.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in both name and price.");
+                return;
+            }
+
+            updateProduct(id, name, price);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a Product to update.");
+        }
+    }//GEN-LAST:event_btnProductUpdateActionPerformed
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        loadProducts(txtSearch.getText());
+    }//GEN-LAST:event_txtSearchKeyPressed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        txtSearch.setText("");
+        loadProducts("");
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        txtProductName.setText("");
+        txtProductPrice.setText("");
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        int selectedRow = tblProducts.getSelectedRow();
+        if (selectedRow >= 0) {
+            int id = (int) tblProducts.getValueAt(selectedRow, 0);
+            deleteProduct(id);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a Product to delete.");
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JButton btnAddProduct;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnProductUpdate;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTable tblProducts;
+    private javax.swing.JTextField txtProductName;
+    private javax.swing.JTextField txtProductPrice;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

@@ -33,7 +33,6 @@ public class UserLogsVIew extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
@@ -87,26 +86,17 @@ public class UserLogsVIew extends javax.swing.JPanel {
 
         jButton5.setBackground(new java.awt.Color(204, 153, 0));
         jButton5.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton5.setText("Detete Selected");
+        jButton5.setText("Delete Selected");
         jButton5.setMaximumSize(new java.awt.Dimension(88, 30));
         jButton5.setMinimumSize(new java.awt.Dimension(88, 30));
         jButton5.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 460, 130, 30));
-
-        jButton6.setBackground(new java.awt.Color(204, 153, 0));
-        jButton6.setFont(new java.awt.Font("Serif", 1, 14)); // NOI18N
-        jButton6.setText("Edit Selected");
-        jButton6.setMaximumSize(new java.awt.Dimension(88, 30));
-        jButton6.setMinimumSize(new java.awt.Dimension(88, 30));
-        jButton6.setPreferredSize(new java.awt.Dimension(88, 30));
-        add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 460, 130, 30));
+        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 450, 130, 30));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
