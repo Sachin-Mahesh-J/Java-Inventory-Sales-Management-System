@@ -55,7 +55,7 @@ public class Dbconnect {
                 if (rs.next()) {
                     User user = new User();
                     user.setUsername(rs.getString("username"));
-                    //user.setPassword(rs.getString("password"));
+                    user.setName(rs.getString("name"));
                     user.setUserType(rs.getString("usertype"));
                     return user;
                 }

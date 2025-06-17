@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/models/ComboItem.java</file>
+            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/UserLogsVIew.java</file>
+            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/Dashboardview.java</file>
             <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/models/Dbconnect.java</file>
-            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/BranchView.java</file>
             <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/SuppliersView.java</file>
+            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/BranchView.java</file>
             <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/InventoryView.java</file>
-            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/LoginView.java</file>
+            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/models/User.java</file>
             <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/UsersView.java</file>
+            <file>file:/C:/Users/sachi/Desktop/Inventory%20and%20Sales%20Management%20System/Java-Inventory-Sales-Management-System/src/ISMS/views/LoginView.java</file>
         </group>
     </open-files>
 </project-private>
