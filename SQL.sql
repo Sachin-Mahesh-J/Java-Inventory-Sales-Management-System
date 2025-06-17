@@ -165,7 +165,9 @@ INSERT INTO `users` (`id`, `username`, `name`, `password`, `phone`, `usertype`, 
 -- Table structure for table `userlogs`
 -- ----------------------------
 CREATE TABLE `userlogs` (
+  'id' INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
   `in_time` VARCHAR(45) NOT NULL,
-  `out_time` VARCHAR(45) NOT NULL
+  `out_time` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`)
 );
