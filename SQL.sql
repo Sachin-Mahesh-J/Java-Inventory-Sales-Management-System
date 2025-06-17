@@ -10,7 +10,7 @@ CREATE TABLE `branch` (
   `name` varchar(50) DEFAULT NULL,
   `location` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 INSERT INTO `branch` (`branch_id`, `name`, `location`) VALUES
 (1, 'store 1', 'kandy'),
@@ -25,7 +25,7 @@ CREATE TABLE `product` (
   `name` varchar(50) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
   PRIMARY KEY (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 INSERT INTO `product` (`product_id`, `name`, `price`) VALUES
 (1, 'xps 1', 20093.02),
@@ -44,7 +44,7 @@ CREATE TABLE `inventory` (
   KEY `branch_id` (`branch_id`),
   CONSTRAINT `inventory_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
   CONSTRAINT `inventory_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 -- ----------------------------
 -- Table structure for `supplier`
@@ -54,7 +54,7 @@ CREATE TABLE `supplier` (
   `name` varchar(100) DEFAULT NULL,
   `contact_info` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`supplier_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 INSERT INTO `supplier` (`supplier_id`, `name`, `contact_info`) VALUES
 (1, 'Dell', '0758021331');
@@ -71,7 +71,7 @@ CREATE TABLE `productsupplier` (
   KEY `supplier_id` (`supplier_id`),
   CONSTRAINT `productsupplier_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`),
   CONSTRAINT `productsupplier_ibfk_2` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 INSERT INTO `productsupplier` (`product_supplier_id`, `product_id`, `supplier_id`) VALUES
 (1, 1, 1),
@@ -95,7 +95,7 @@ CREATE TABLE `purchaseorder` (
   KEY `branch_id` (`branch_id`),
   CONSTRAINT `purchaseorder_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `supplier` (`supplier_id`),
   CONSTRAINT `purchaseorder_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 -- ----------------------------
 -- Table structure for `purchasedetails`
@@ -110,7 +110,7 @@ CREATE TABLE `purchasedetails` (
   KEY `product_id` (`product_id`),
   CONSTRAINT `purchasedetails_ibfk_1` FOREIGN KEY (`po_id`) REFERENCES `purchaseorder` (`po_id`),
   CONSTRAINT `purchasedetails_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 -- ----------------------------
 -- Table structure for `sales`
@@ -122,7 +122,7 @@ CREATE TABLE `sales` (
   PRIMARY KEY (`sale_id`),
   KEY `branch_id` (`branch_id`),
   CONSTRAINT `sales_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 -- ----------------------------
 -- Table structure for `saledetails`
@@ -137,7 +137,7 @@ CREATE TABLE `saledetails` (
   KEY `product_id` (`product_id`),
   CONSTRAINT `saledetails_ibfk_1` FOREIGN KEY (`sale_id`) REFERENCES `sales` (`sale_id`),
   CONSTRAINT `saledetails_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 -- ----------------------------
 -- Table structure for `users`
@@ -155,8 +155,17 @@ CREATE TABLE `users` (
   UNIQUE KEY `username` (`username`),
   KEY `branch_id` (`branch_id`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ;
 
 INSERT INTO `users` (`id`, `username`, `name`, `password`, `phone`, `usertype`, `branch_id`, `created_at`) VALUES
 (1, 'Admin', 'admin admin', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '0750459230', 'ADMIN', 1, '2025-06-12 10:11:19'),
 (4, 'Sachin', 'Sachin Mahesh', '123456', '1231231232', 'MANAGER', 2, '2025-06-14 17:16:15');
+
+-- ----------------------------
+-- Table structure for table `userlogs`
+-- ----------------------------
+CREATE TABLE `userlogs` (
+  `username` VARCHAR(45) NOT NULL,
+  `in_time` VARCHAR(45) NOT NULL,
+  `out_time` VARCHAR(45) NOT NULL
+);
