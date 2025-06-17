@@ -15,9 +15,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class InventoryView extends javax.swing.JPanel {
 
-    /**
-     * Creates new form InventoryView
-     */
+    private int selectedProductid;
     public InventoryView() {
         initComponents();
         loadBranches();
@@ -96,6 +94,11 @@ public class InventoryView extends javax.swing.JPanel {
         tblInventory = new javax.swing.JTable();
         btnReset = new javax.swing.JButton();
         btnUpdateStock = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        spinnewStock = new javax.swing.JSpinner();
+        txtSelectedProductid = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.MatteBorder(null));
@@ -132,6 +135,7 @@ public class InventoryView extends javax.swing.JPanel {
         });
         jPanel1.add(btnLoadStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 10, 120, 30));
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Inventory for selected branch", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 1, 14))); // NOI18N
         jScrollPane1.setMaximumSize(new java.awt.Dimension(1010, 350));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(1010, 350));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(1010, 350));
@@ -152,14 +156,19 @@ public class InventoryView extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblInventory.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblInventoryMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblInventory);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 1010, 350));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 1010, 280));
 
         btnReset.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnReset.setText("Reset");
         btnReset.setPreferredSize(new java.awt.Dimension(75, 30));
-        jPanel1.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 410, 90, -1));
+        jPanel1.add(btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 390, 90, -1));
 
         btnUpdateStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnUpdateStock.setText("Update Stock");
@@ -169,9 +178,37 @@ public class InventoryView extends javax.swing.JPanel {
                 btnUpdateStockActionPerformed(evt);
             }
         });
-        jPanel1.add(btnUpdateStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 410, 130, -1));
+        jPanel1.add(btnUpdateStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 390, 130, -1));
 
-        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 52, 1030, 460));
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Selected Product ID:");
+        jLabel3.setMaximumSize(new java.awt.Dimension(150, 30));
+        jLabel3.setMinimumSize(new java.awt.Dimension(150, 30));
+        jLabel3.setPreferredSize(new java.awt.Dimension(150, 30));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 150, -1));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setText("New Stock amount:");
+        jLabel4.setMaximumSize(new java.awt.Dimension(150, 30));
+        jLabel4.setMinimumSize(new java.awt.Dimension(150, 30));
+        jLabel4.setPreferredSize(new java.awt.Dimension(150, 30));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 390, 150, -1));
+
+        spinnewStock.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        spinnewStock.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinnewStock.setPreferredSize(new java.awt.Dimension(50, 30));
+        jPanel1.add(spinnewStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 390, 190, -1));
+
+        txtSelectedProductid.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtSelectedProductid.setMaximumSize(new java.awt.Dimension(190, 30));
+        txtSelectedProductid.setMinimumSize(new java.awt.Dimension(190, 30));
+        txtSelectedProductid.setPreferredSize(new java.awt.Dimension(190, 30));
+        jPanel1.add(txtSelectedProductid, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 350, 190, -1));
+
+        jButton1.setText("jButton1");
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 410, -1, -1));
+
+        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 52, 1030, 500));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLoadStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadStockActionPerformed
@@ -186,12 +223,21 @@ public class InventoryView extends javax.swing.JPanel {
             int productId = (int) tblInventory.getValueAt(selectedRow, 0);
             ComboItem selectedBranch = (ComboItem) cmbBranch.getSelectedItem();
             int branchId = selectedBranch.getId();
-            int newStock = (int) tblInventory.getValueAt(selectedRow, 3);
-            updateStock(branchId, productId, newStock);
+            int newStock = (int) spinnewStock.getValue();
+            updateStock(branchId, selectedProductid, newStock);
         } else {
             JOptionPane.showMessageDialog(this, "Select a product to update.");
         }
     }//GEN-LAST:event_btnUpdateStockActionPerformed
+
+    private void tblInventoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblInventoryMouseClicked
+        int selectedRow = tblInventory.getSelectedRow();
+         if (selectedRow != -1) {
+            selectedProductid = (int) tblInventory.getValueAt(selectedRow, 0);
+            
+            txtSelectedProductid.setText(String.valueOf(selectedProductid));
+         }
+    }//GEN-LAST:event_tblInventoryMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -199,10 +245,15 @@ public class InventoryView extends javax.swing.JPanel {
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnUpdateStock;
     private javax.swing.JComboBox<ISMS.models.ComboItem> cmbBranch;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSpinner spinnewStock;
     private javax.swing.JTable tblInventory;
+    private javax.swing.JTextField txtSelectedProductid;
     // End of variables declaration//GEN-END:variables
 }
